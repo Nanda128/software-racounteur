@@ -82,4 +82,4 @@ modules never read files or print.
   prints a message in both modes. In the first mode an unknown country quietly
   means "all countries"; `--compare` rejects it.
 - Plot images are written to the current directory and git-ignored.
-- More caveats are in `docs/evaluation.md`.
+- More caveats are in `docs`.

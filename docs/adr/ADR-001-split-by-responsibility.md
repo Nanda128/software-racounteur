@@ -2,7 +2,7 @@
 
 ## Context
 
-The EVA app was one script where reading, cleaning, analysis, output and control flow were tangled together (see [the assessment](../architectural-assessment.md)). 
+The EVA app was one script where reading, cleaning, analysis, output and control flow were tangled together. 
 Importing it ran the whole program. 
 The main functions read global variables, so they couldn't be run on test data, and one function took raw typed text and did the filtering, totalling and counting. 
 A single file isn't allowed, and the new country-comparison feature needed to reuse the existing calculations.
@@ -24,7 +24,7 @@ Create the `eva/` package with `data_source`, `preparation`, `models`, `analysis
 Keep `evacodev2.py` as a thin entry point. 
 Modules talk through plain functions and one small dataclass, `EvaRecord`. 
 There is no module-level state. 
-Only `app` depends on everything else. See [architecture.md](../architecture.md).
+Only `app` depends on everything else.
 
 ## Rationale
 
@@ -46,4 +46,4 @@ Costs:
 - More files and imports to follow in a small program.
 - `preparation` and `analysis` both depend on the shape of `EvaRecord`, so changing a field touches both.
 - `app.py` knows every module. It has to stay free of logic, or it becomes the new monolith.
-- There were no tests at the start, so "behaviour unchanged" had to be shown by comparing outputs before and after (see [the evaluation](../evaluation.md)).
+- There were no tests at the start, so "behaviour unchanged" had to be shown by comparing outputs before and after.

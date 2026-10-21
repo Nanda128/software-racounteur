@@ -12,6 +12,7 @@ class EvaRecord:
         duration_hours (float): Length of the EVA in decimal hours.
         country (str): Country that performed the EVA.
     """
+
     date: datetime
     duration_hours: float
     country: str

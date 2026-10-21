@@ -8,26 +8,26 @@ from eva.presentation import format_comparison
 from eva.user_input import parse_arguments, prompt_comparison_query, prompt_query
 
 
+def prompt_with(*answers):
+    with mock.patch("builtins.input", side_effect=answers):
+        return prompt_query()
+    return None
+
+
 class PromptQueryTests(unittest.TestCase):
-    def prompt_with(self, *answers):
-        with mock.patch("builtins.input", side_effect=answers):
-            return prompt_query()
 
     def test_returns_typed_country_and_integer_years(self):
-        self.assertEqual(self.prompt_with(" USA ", " 1965 ", "1975"), ("USA", 1965, 1975))
+        self.assertEqual(prompt_with(" USA ", " 1965 ", "1975"), ("USA", 1965, 1975))
 
     def test_blank_answers_mean_no_country_and_no_year_bounds(self):
-        self.assertEqual(self.prompt_with("", "", ""), ("", None, None))
+        self.assertEqual(prompt_with("", "", ""), ("", None, None))
 
     def test_non_numeric_year_is_an_invalid_query(self):
         with self.assertRaises(InvalidQueryError):
-            self.prompt_with("USA", "abc", "")
+            prompt_with("USA", "abc", "")
 
 
 class PromptComparisonQueryTests(unittest.TestCase):
-    def prompt_with(self, *answers):
-        with mock.patch("builtins.input", side_effect=answers):
-            return prompt_comparison_query()
 
     def test_returns_trimmed_names_and_integer_years(self):
         self.assertEqual(
@@ -52,13 +52,15 @@ class ParseArgumentsTests(unittest.TestCase):
         self.assertTrue(parse_arguments(["--compare"]).compare)
 
 
+def result(summary_b, leader):
+    summary_a = CountrySummary("USA", 2, 6.0, 3.0)
+    return ComparisonResult(1965, 1966, summary_a, summary_b, leader)
+
+
 class FormatComparisonTests(unittest.TestCase):
-    def result(self, summary_b, leader):
-        summary_a = CountrySummary("USA", 2, 6.0, 3.0)
-        return ComparisonResult(1965, 1966, summary_a, summary_b, leader)
 
     def test_shows_statistics_and_leader(self):
-        text = format_comparison(self.result(CountrySummary("Russia", 3, 4.0, 4.0 / 3), "USA"))
+        text = format_comparison(result(CountrySummary("Russia", 3, 4.0, 4.0 / 3), "USA"))
         self.assertIn("1965 to 1966", text)
         self.assertIn("Total EVAs: 2", text)
         self.assertIn("Total duration (hours): 6.00", text)
@@ -66,11 +68,11 @@ class FormatComparisonTests(unittest.TestCase):
         self.assertIn("Result: USA has the greater total EVA duration", text)
 
     def test_missing_average_is_shown_as_unavailable(self):
-        text = format_comparison(self.result(CountrySummary("Russia", 0, 0, None), "USA"))
+        text = format_comparison(result(CountrySummary("Russia", 0, 0, None), "USA"))
         self.assertIn("Average duration (hours): unavailable", text)
 
     def test_tie_is_reported(self):
-        text = format_comparison(self.result(CountrySummary("Russia", 2, 6.0, 3.0), None))
+        text = format_comparison(result(CountrySummary("Russia", 2, 6.0, 3.0), None))
         self.assertIn("tie", text)
 
 
