@@ -29,6 +29,10 @@ class PromptQueryTests(unittest.TestCase):
 
 class PromptComparisonQueryTests(unittest.TestCase):
 
+    def prompt_with(self, *answers):
+        with mock.patch("builtins.input", side_effect=answers):
+            return prompt_comparison_query()
+
     def test_returns_trimmed_names_and_integer_years(self):
         self.assertEqual(
             self.prompt_with(" USA ", "Russia", " 1965", "1975 "),
